@@ -21,11 +21,11 @@ export class App extends Component {
 
   formSubmit = data => {
     const id = nanoid();
-    const isExist = this.state.contacts.find(contact => contact.name === data.name);
-    
-    if (
-      isExist
-    ) {
+    const isExist = this.state.contacts.find(
+      contact => contact.name === data.name
+    );
+
+    if (isExist) {
       alert(`${data.name} is already in contacts`);
       return;
     }
@@ -47,15 +47,29 @@ export class App extends Component {
     });
   };
 
-  getVisibleContacts = () => { 
+  getVisibleContacts = () => {
     const filterNormalize = this.state.filter.toLowerCase();
     return this.state.contacts.filter(contact =>
       contact.name.toLowerCase().includes(filterNormalize)
     );
+  };
+
+  componentDidMount() {
+    const contacts = localStorage.getItem('contacts');
+    const parsedContacts = JSON.parse(contacts);
+
+    if (parsedContacts) {
+      this.setState({ contacts: parsedContacts });
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.contacts !== prevState.contacts) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    }
   }
 
   render() {
-    
     const visibleContacts = this.getVisibleContacts();
 
     return (
